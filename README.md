@@ -12,11 +12,27 @@ bundle install
 
 # Run
 
+## Create the test database
+
+```
+rake create_db
+```
+
+## Execute
+
 ```
 ruby contact_list.rb
 ```
 
 # Test
+
+## Create the test database
+
+```
+rake test:create_db
+```
+
+## Execute
 
 ```
 rspec
