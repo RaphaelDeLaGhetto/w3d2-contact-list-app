@@ -27,7 +27,7 @@ class ContactList
     when 'show'
       id = @input[1].to_i
       record = Contact.find(id)
-      puts record.nil? ? "That contact doesn't exist" : "#{record[0]}: #{record[1]} (#{record[2]})"
+      puts record.nil? ? "That contact doesn't exist" : "#{record.id}: #{record.name} (#{record.email})"
     when 'search'
       # This should be DRYed out
       contacts = Contact.search(@input[1])

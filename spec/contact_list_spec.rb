@@ -100,5 +100,89 @@ describe ContactList do
                                                                             "0 records total\n").to_stdout
       end
     end
+
+    context "program is executed with 'update' argument" do
+      before(:each) do
+        @name = "Khurram Macho Man Virani"
+        @email = "khurram@wwe.com"
+        # Stage the test
+#        @contact_list = ContactList.new(['update', '1'])
+#
+#        # Commandline input 
+#        call = -1 
+#        allow(STDIN).to receive_message_chain(:gets) do 
+#          [@name, @email][call += 1]
+#        end
+#        @response = @contact_list.process
+      end
+
+      it "prompts agent for name and email information" do
+        expect(STDOUT).to receive(:puts).with('Name (Khurram Virani):')
+        expect(STDOUT).to receive(:puts).with('Email (kvirani@lighthouselabs.ca):')
+
+        contact = ContactList.new(['update', '1'])
+
+        allow(STDIN).to receive(:gets) { @name }
+        allow(STDIN).to receive(:gets) { @email }
+        contact.process
+      end
+
+      it "updates the existing contact database" do
+        results = Contact.connection.exec("SELECT * FROM contacts WHERE id = '1'");
+        expect(results.values[0][0]).to eq('1')
+        expect(results.values[0][1]).to eq('Khurram Virani')
+        expect(results.values[0][2]).to eq('kvirani@lighthouselabs.ca')
+
+        contact = ContactList.new(['update', '1'])
+
+        allow(STDIN).to receive(:gets) { @name }
+        allow(STDIN).to receive(:gets) { @email }
+        contact.process
+
+        results = Contact.connection.exec("SELECT * FROM contacts WHERE id = '1'");
+        expect(results.values[0][0]).to eq('1')
+        expect(results.values[0][1]).to eq('Khurram Macho Man Virani')
+        expect(results.values[0][2]).to eq('khurram@wwe.com')
+      end
+
+      it "does not add a new record" do
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(2)
+
+        contact = ContactList.new(['update', '1'])
+
+        allow(STDIN).to receive(:gets) { @name }
+        allow(STDIN).to receive(:gets) { @email }
+        contact.process
+
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(2)
+      end
+
+      it "doesn't change record if no input provided" do
+        results = Contact.connection.exec("SELECT * FROM contacts WHERE id = '1'");
+        expect(results.values[0][0]).to eq('1')
+        expect(results.values[0][2]).to eq('Khurram Virani')
+        expect(results.values[0][2]).to eq('kvirani@lighthouselabs.ca')
+
+        contact = ContactList.new(['update', '1'])
+
+        allow(STDIN).to receive(:gets) { '' }
+        allow(STDIN).to receive(:gets) { '   ' }
+        contact.process
+
+        results = Contact.connection.exec("SELECT * FROM contacts WHERE id = '1'");
+        expect(results.values[0][0]).to eq('1')
+        expect(results.values[0][1]).to eq('Khurram Virani')
+        expect(results.values[0][2]).to eq('kvirani@lighthouselabs.ca')
+      end
+
+      it "doesn't barf if ID is out of range" do
+        expect { ContactList.new(['update', '-1']).process }.to output("That contact doesn't exist\n").to_stdout
+        expect { ContactList.new(['update', '0']).process }.to output("That contact doesn't exist\n").to_stdout
+        expect { ContactList.new(['update', '3']).process }.to output("That contact doesn't exist\n").to_stdout
+        expect { ContactList.new(['update', 'junk']).process }.to output("That contact doesn't exist\n").to_stdout
+      end
+    end
   end
 end
