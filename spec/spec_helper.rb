@@ -123,9 +123,3 @@ ActiveRecord::Base.establish_connection(
   :adapter => 'postgresql',
   :database => 'test_contacts'
 )
-
-# Recreate the database
-#ActiveRecord::Migration.suppress_messages do
-#  require './db/schema.rb'
-#end
-
