@@ -1,4 +1,9 @@
 source "https://rubygems.org"
 
 gem 'pg'
-gem 'rspec'
+
+group :test, :development do
+  gem 'rspec'
+  gem 'activerecord'
+  gem 'database_cleaner'
+end
