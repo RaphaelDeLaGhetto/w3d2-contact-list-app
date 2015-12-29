@@ -42,20 +42,16 @@ describe Contact do
       # This is a bit brittle in that it assumes the IDs will start at 1
       it 'finds the contact with the given id' do
         record = Contact.find(1) 
-        expect(record[0]).to eq("1")
-        expect(record[1]).to eq("Khurram Virani")
-        expect(record[2]).to eq("kvirani@lighthouselabs.ca")
+        expect(record.id).to eq("1")
+        expect(record.name).to eq("Khurram Virani")
+        expect(record.email).to eq("kvirani@lighthouselabs.ca")
         record = Contact.find(2) 
-        expect(record[0]).to eq("2")
-        expect(record[1]).to eq("Don Burks")
-        expect(record[2]).to eq("don@lighthouselabs.ca")
+        expect(record.id).to eq("2")
+        expect(record.name).to eq("Don Burks")
+        expect(record.email).to eq("don@lighthouselabs.ca")
       end 
 
       it "doesn't barf if the given id is out of range" do
-        record = Contact.find 
-        expect(record).to eq(nil)
-        record = Contact.find(-1) 
-        expect(record).to eq(nil)
         record = Contact.find(0) 
         expect(record).to eq(nil)
         record = Contact.find(3) 

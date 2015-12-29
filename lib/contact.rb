@@ -4,11 +4,12 @@ require 'pg'
 # Represents a person in an address book.
 class Contact
 
-  attr_accessor :name, :email
+  attr_accessor :name, :email, :id
 
-  def initialize(name, email)
+  def initialize(name, email, id=nil)
     @name = name
     @email = email
+    @id = id
   end
 
   def save
@@ -34,7 +35,8 @@ class Contact
     # Returns the contact with the specified id. If no contact has the id, returns nil.
     def find(id=nil)
       record = self.connection.exec_params('SELECT * FROM contacts WHERE id = $1::int', [id]) if id.is_a?(Integer)
-      record.nil? || record.num_tuples.zero? ? nil : record[0].values
+#      record.nil? || record.num_tuples.zero? ? nil : record[0].values
+      record.nil? || record.num_tuples.zero? ? nil : new(record[0].values[1], record[0].values[2], record[0].values[0])
     end
 
     # Returns an array of contacts who match the given term.
@@ -45,8 +47,7 @@ class Contact
 
     # Get the postgres connection object
     def connection
-      return @conn if @conn
-      @conn = PG.connect(dbname: 'contacts')
+      @conn = PG.connect(dbname: 'contacts') if @conn.nil?
     end
   end
 end
