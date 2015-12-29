@@ -28,12 +28,12 @@ class ContactList
     when 'show'
       id = @input[1].to_i
       record = Contact.find(id)
-      puts record.nil? ? "That contact doesn't exist" : "#{id}: #{record[0]} (#{record[1]})"
+      puts record.nil? ? "That contact doesn't exist" : "#{record[0]}: #{record[1]} (#{record[2]})"
     when 'search'
       # This should be DRYed out
       contacts = Contact.search(@input[1])
       contacts.each do |contact|
-        puts "#{contact[2]}: #{contact[0]} (#{contact[1]})"
+        puts "#{contact[0]}: #{contact[1]} (#{contact[2]})"
       end
       puts '---'
       puts "#{contacts.count} #{"record".pluralize(contacts.count)} total"
@@ -42,7 +42,8 @@ class ContactList
            "  new    - Create a new contact\n"\
            "  list   - List all contacts\n"\
            "  show   - Show a contact\n"\
-           "  search - Search contacts\n"
+           "  search - Search contacts\n"\
+           "  update - Update a contact\n"
     end
   end
 

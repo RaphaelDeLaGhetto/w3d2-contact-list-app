@@ -14,7 +14,8 @@ describe ContactList do
                                                          "  new    - Create a new contact\n"\
                                                          "  list   - List all contacts\n"\
                                                          "  show   - Show a contact\n"\
-                                                         "  search - Search contacts\n").to_stdout
+                                                         "  search - Search contacts\n"\
+                                                         "  update - Update a contact\n").to_stdout
       end
     end
   
@@ -22,8 +23,8 @@ describe ContactList do
       it "outputs a list of all contacts" do
         expect { ContactList.new(['list']).process }.to output("1: Khurram Virani (kvirani@lighthouselabs.ca)\n"\
                                                                "2: Don Burks (don@lighthouselabs.ca)\n"\
-                                                                "---\n"\
-                                                                "2 records total\n").to_stdout
+                                                               "---\n"\
+                                                               "2 records total\n").to_stdout
       end
     end
 
