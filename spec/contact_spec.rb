@@ -18,26 +18,28 @@ describe Contact do
     describe '.create'do
       before(:each) do
         @name = 'Dan'
-        @email = 'daniel@capitolhll.ca'
+        @email = 'daniel@capitolhill.ca'
         allow(CSV).to receive(:open).and_yield(@parsed_data)
       end
 
-      it 'returns the newly created contact' do
-        contact = Contact.create(@name, @email)
-        expect(contact.name).to eq(@name)
-        expect(contact.email).to eq(@email)
+      it 'responds with OK' do
+        response = Contact.create(@name, @email)
+        expect(response.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
       end
 
-      it 'adds a new contact to the CSV file' do
+      it 'adds a new contact to the database' do
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(2)
+
         contact = Contact.create(@name, @email)
-        expect(CSV).to have_received(:open).with('data/contacts.csv', 'ab').once
-        expect(@parsed_data[2]).to eq([contact.name, contact.email])
+
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(3)
       end
     end 
 
     describe '.find'do
-      # This is super brittle. The IDs were set when the table was created and populated
-      # TODO: set up a test database
+      # This is a bit brittle in that it assumes the IDs will start at 1
       it 'finds the contact with the given id' do
         record = Contact.find(1) 
         expect(record[0]).to eq("1")
@@ -121,9 +123,8 @@ describe Contact do
 
     describe '#save' do
       it 'inserts data into the database' do
-        conn = Contact.connection
-#        conn = @contact.class.connection
-        expect(@contact.class.connection).to have_received(:exec_params).with("INSERT INTO contacts (name, email) VALUES ($1, $2)", ['Dan', 'daniel@capitolhill.ca']).once
+        expect(@contact.class.connection).to receive(:exec_params).
+          with("INSERT INTO contacts (name, email) VALUES ($1, $2)", ['Dan', 'daniel@capitolhill.ca']).once
         @contact.save
       end
     end

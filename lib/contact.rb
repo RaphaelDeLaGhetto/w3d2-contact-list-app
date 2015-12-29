@@ -28,10 +28,7 @@ class Contact
 
     # Creates a new contact, adding it to the database, returning the new contact.
     def create(name, email)
-      CSV.open("data/contacts.csv", "ab") do |csv|
-        csv << [name, email]
-      end
-      new(name, email)
+      new(name, email).save
     end
 
     # Returns the contact with the specified id. If no contact has the id, returns nil.
@@ -48,7 +45,8 @@ class Contact
 
     # Get the postgres connection object
     def connection
-      PG.connect(dbname: 'contacts')
+      return @conn if @conn
+      @conn = PG.connect(dbname: 'contacts')
     end
   end
 end

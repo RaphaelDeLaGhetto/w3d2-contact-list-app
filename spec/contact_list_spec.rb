@@ -1,4 +1,5 @@
 require_relative '../contact_list'
+require './lib/contact'
 
 describe ContactList do
   describe '#process' do
@@ -32,11 +33,7 @@ describe ContactList do
       before(:each) do
         # New contact details
         @name = 'Dan'
-        @email = 'daniel@capitolhll.ca'
-
-        # The tested method writes to file
-        @csv = []
-        allow(CSV).to receive(:open).and_yield(@csv)
+        @email = 'daniel@capitolhill.ca'
 
         # Stage the test
         @contact_list = ContactList.new(['new'])
@@ -46,7 +43,7 @@ describe ContactList do
         allow(STDIN).to receive_message_chain(:gets) do 
           [@name, @email][call += 1]
         end
-        @contact = @contact_list.process
+        @response = @contact_list.process
       end
 
       it "prompts agent for name and email information" do
@@ -60,15 +57,13 @@ describe ContactList do
         contact.process
       end
 
-      it "adds a new contact to the CSV" do
-        expect(CSV).to have_received(:open).with('data/contacts.csv', 'ab').once
-        expect(@csv.count).to eq(1)
-        expect(@csv[0]).to eq([@name, @email])
+      it "adds a new contact to the database" do
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(3)
       end
 
-      it "returns a Contact object (by accident more than by design - optional)" do
-        expect(@contact.name).to eq(@name)
-        expect(@contact.email).to eq(@email)
+      it "responds with OK" do
+        expect(@response.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
       end
     end
 
