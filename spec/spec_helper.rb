@@ -103,7 +103,7 @@ RSpec.configure do |config|
     # Seed the database
     @conn = PG.connect(dbname: 'test_contacts')
     CSV.foreach("data/contacts.csv") do |record|
-      @conn.exec_params('INSERT INTO contacts (name, email) VALUES ($1, $2);', record)
+      @conn.exec_params('INSERT INTO contacts (name, email) VALUES ($1, $2);', record[0..1])
     end
 
     # Connect to the test database when testing
