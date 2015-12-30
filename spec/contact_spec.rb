@@ -136,5 +136,32 @@ describe Contact do
         expect(contact.email).to eq('daniel@rockyvalley.ca')
       end
     end
+
+    describe '#destroy' do
+      it 'makes the correct database query' do
+        contact = Contact.find(2)
+        expect(contact.class.connection).to receive(:exec_params).
+          with("DELETE FROM contacts WHERE id = $1::int", ['2']).once
+        contact.destroy
+      end
+
+      it 'removes contact from the database' do
+        @contact.save
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(3)
+
+        contact = Contact.find(3)
+        expect(contact.destroy.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
+
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(2)
+
+        contact = Contact.find(1)
+        expect(contact.destroy.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
+
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(1)
+      end
+    end
   end
 end

@@ -13,10 +13,14 @@ class Contact
 
   def save
     if @id
-      self.class.connection.exec_params('UPDATE contacts SET name = $1, email = $2 WHERE id = $3::int;', [@name, @email, @id])
+      self.class.connection.exec_params('UPDATE contacts SET name = $1, email = $2 WHERE id = $3::int', [@name, @email, @id])
     else
       self.class.connection.exec_params('INSERT INTO contacts (name, email) VALUES ($1, $2)', [@name, @email])
     end
+  end
+
+  def destroy
+    self.class.connection.exec_params('DELETE FROM contacts WHERE id = $1::int', [@id])
   end
 
   # Provides functionality for managing a list of Contacts in a database.

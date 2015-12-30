@@ -7,11 +7,12 @@ describe ContactList do
     context 'program is executed without arguments' do
       it "displays a help menu" do
         expect { ContactList.new([]).process }.to output("Here is a list of available commands:\n"\
-                                                         "  new    - Create a new contact\n"\
-                                                         "  list   - List all contacts\n"\
-                                                         "  show   - Show a contact\n"\
-                                                         "  search - Search contacts\n"\
-                                                         "  update - Update a contact\n").to_stdout
+                                                         "  new     - Create a new contact\n"\
+                                                         "  list    - List all contacts\n"\
+                                                         "  show    - Show a contact\n"\
+                                                         "  search  - Search contacts\n"\
+                                                         "  update  - Update a contact\n"\
+                                                         "  destroy - Remove a contact\n").to_stdout
       end
     end
   
@@ -170,6 +171,30 @@ describe ContactList do
         expect { ContactList.new(['update', '0']).process }.to output("That contact doesn't exist\n").to_stdout
         expect { ContactList.new(['update', '3']).process }.to output("That contact doesn't exist\n").to_stdout
         expect { ContactList.new(['update', 'junk']).process }.to output("That contact doesn't exist\n").to_stdout
+      end
+    end
+
+    context "program is executed with 'destroy' argument" do
+      it "reports success if contact is removed from the database" do
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(2)
+
+        expect { ContactList.new(['destroy', '1']).process }.to output("Contact destroyed\n").to_stdout
+
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(1)
+
+        expect { ContactList.new(['destroy', '2']).process }.to output("Contact destroyed\n").to_stdout
+
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(0)
+      end
+     
+      it "doesn't barf if contact doesn't exist" do
+        expect { ContactList.new(['destroy', '-1']).process }.to output("That contact doesn't exist\n").to_stdout
+        expect { ContactList.new(['destroy', '0']).process }.to output("That contact doesn't exist\n").to_stdout
+        expect { ContactList.new(['destroy', '3']).process }.to output("That contact doesn't exist\n").to_stdout
+        expect { ContactList.new(['destroy', 'junk']).process }.to output("That contact doesn't exist\n").to_stdout
       end
     end
   end
