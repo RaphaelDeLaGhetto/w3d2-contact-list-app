@@ -29,13 +29,26 @@ class ContactList
       record = Contact.find(id)
       puts record.nil? ? "That contact doesn't exist" : "#{record.id}: #{record.name} (#{record.email})"
     when 'search'
-      # This should be DRYed out
       contacts = Contact.search(@input[1])
       contacts.each do |contact|
         puts "#{contact[0]}: #{contact[1]} (#{contact[2]})"
       end
       puts '---'
       puts "#{contacts.count} #{"record".pluralize(contacts.count)} total"
+    when 'update'
+      id = @input[1].to_i
+      record = Contact.find(id)
+      if record.nil?
+        puts "That contact doesn't exist"
+        return
+      end
+      puts "Name (#{record.name}):"
+      name = STDIN.gets.strip
+      record.name = name if !name.empty?
+      puts "Email (#{record.email}):"
+      email = STDIN.gets.strip
+      record.email = email if !email.empty?
+      record.save
     when nil 
       puts "Here is a list of available commands:\n"\
            "  new    - Create a new contact\n"\

@@ -3,12 +3,6 @@ require 'contact'
 describe Contact do
   context 'class methods' do
 
-    before(:each) do
-      data = ['Khurram Virani,kvirani@lighthouselabs.ca', 'Don Burks,don@lighthouselabs.ca']
-      @parsed_data = CSV.parse(data[0]) << CSV.parse(data[1])[0]
-      allow(CSV).to receive(:read).and_return(@parsed_data)
-    end
-
     describe '.all'do
       it 'returns a formatted list of all contacts' do
         expect(Contact.all).to eq([['Khurram Virani', 'kvirani@lighthouselabs.ca'], ['Don Burks', 'don@lighthouselabs.ca']])
@@ -19,7 +13,6 @@ describe Contact do
       before(:each) do
         @name = 'Dan'
         @email = 'daniel@capitolhill.ca'
-        allow(CSV).to receive(:open).and_yield(@parsed_data)
       end
 
       it 'responds with OK' do
@@ -113,15 +106,34 @@ describe Contact do
       @contact = Contact.new('Dan', 'daniel@capitolhill.ca')
     end
 
-    after(:each) do
-      Contact.connection.exec("DELETE FROM contacts WHERE name = 'Dan'")
-    end
-
     describe '#save' do
-      it 'inserts data into the database' do
+      it 'inserts new data into the database' do
         expect(@contact.class.connection).to receive(:exec_params).
           with("INSERT INTO contacts (name, email) VALUES ($1, $2)", ['Dan', 'daniel@capitolhill.ca']).once
         @contact.save
+      end
+
+      it 'updates existing data in the database' do
+        @contact.save
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(3)
+
+        contact = Contact.find(3)
+        expect(contact.id).to eq('3')
+        expect(contact.name).to eq('Dan')
+        expect(contact.email).to eq('daniel@capitolhill.ca')
+
+        contact.name = 'Daniel Bidulock'
+        contact.email = 'daniel@rockyvalley.ca'
+        contact.save
+
+        results = Contact.connection.exec('SELECT count(*) FROM contacts');
+        expect(results.values[0][0].to_i).to eq(3)
+
+        contact = Contact.find(3)
+        expect(contact.id).to eq('3')
+        expect(contact.name).to eq('Daniel Bidulock')
+        expect(contact.email).to eq('daniel@rockyvalley.ca')
       end
     end
   end

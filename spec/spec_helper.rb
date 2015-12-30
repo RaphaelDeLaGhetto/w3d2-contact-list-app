@@ -1,4 +1,5 @@
 require 'active_record'
+require 'csv'
 require 'database_cleaner'
 require './lib/contact'
 
