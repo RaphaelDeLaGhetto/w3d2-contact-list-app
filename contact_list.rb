@@ -12,8 +12,8 @@ class ContactList
     case @input[0]
     when 'list'
       contacts = Contact.all
-      contacts.each_with_index do |contact, index|
-        puts "#{index + 1}: #{contact[0]} (#{contact[1]})"
+      contacts.each do |contact|
+        puts "#{contact[0]}: #{contact[1]} (#{contact[2]})"
       end
       puts '---'
       puts "#{contacts.count} records total"

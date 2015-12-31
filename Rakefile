@@ -11,7 +11,7 @@ namespace :test do
     conn = PG.connect(dbname: 'test_contacts')
     conn.exec('CREATE TABLE contacts (id serial NOT NULL PRIMARY KEY, name varchar(40) NOT NULL, email varchar(40) NOT NULL)')
     conn.exec('CREATE TABLE phone_numbers (id serial NOT NULL PRIMARY KEY, number varchar(40) NOT NULL, contact_id integer NOT NULL, '\
-                            'FOREIGN KEY (contact_id) references contacts(id))')
+                            'FOREIGN KEY (contact_id) references contacts(id) ON DELETE CASCADE)')
   end
 end
 
@@ -22,7 +22,8 @@ task :create_db do
   conn.exec('CREATE DATABASE contacts')
   conn = PG.connect(dbname: 'contacts')
   conn.exec('CREATE TABLE contacts (id serial NOT NULL PRIMARY KEY, name varchar(40) NOT NULL, email varchar(40) NOT NULL)')
-  conn.exec('CREATE TABLE phone_numbers (id serial NOT NULL PRIMARY KEY, number varchar(40) NOT NULL, contact_id integer NOT NULL REFERENCES contacts(id))')
+  conn.exec('CREATE TABLE phone_numbers (id serial NOT NULL PRIMARY KEY, number varchar(40) NOT NULL, '\
+                          'contact_id integer NOT NULL REFERENCES contacts(id) ON DELETE CASCADE)')
 
   CSV.foreach("data/contacts.csv") do |record|
     conn.exec_params("WITH inserted AS ("\

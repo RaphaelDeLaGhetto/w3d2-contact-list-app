@@ -5,7 +5,8 @@ describe Contact do
 
     describe '.all'do
       it 'returns a formatted list of all contacts' do
-        expect(Contact.all).to eq([['Khurram Virani', 'kvirani@lighthouselabs.ca'], ['Don Burks', 'don@lighthouselabs.ca']])
+        expect(Contact.all).to eq([['1', 'Khurram Virani', 'kvirani@lighthouselabs.ca'],
+                                   ['2', 'Don Burks', 'don@lighthouselabs.ca']])
       end
     end 
 
@@ -161,6 +162,23 @@ describe Contact do
 
         results = Contact.connection.exec('SELECT count(*) FROM contacts');
         expect(results.values[0][0].to_i).to eq(1)
+      end
+
+      it 'removes dependent phone_numbers from the database' do
+        results = Contact.connection.exec('SELECT count(*) FROM phone_numbers');
+        expect(results.values[0][0].to_i).to eq(2)
+
+        contact = Contact.find(1)
+        expect(contact.destroy.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
+
+        results = Contact.connection.exec('SELECT count(*) FROM phone_numbers');
+        expect(results.values[0][0].to_i).to eq(1)
+
+        contact = Contact.find(2)
+        expect(contact.destroy.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
+
+        results = Contact.connection.exec('SELECT count(*) FROM phone_numbers');
+        expect(results.values[0][0].to_i).to eq(0)
       end
     end
   end

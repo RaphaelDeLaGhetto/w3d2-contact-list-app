@@ -29,7 +29,7 @@ class Contact
     # Returns an Array of Contacts loaded from the database.
     def all
       contacts = []
-      self.connection.exec('SELECT name, email FROM contacts') do |result|
+      self.connection.exec('SELECT * FROM contacts') do |result|
         contacts = result.values
       end
     end
