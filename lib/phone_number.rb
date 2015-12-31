@@ -30,7 +30,6 @@ class PhoneNumber < BaseModel
     def all(contact_id)
       phone_numbers = []
       self.connection.exec_params('SELECT id, number FROM phone_numbers WHERE contact_id = $1::int', [contact_id]) do |result|
-        #phone_numbers = result.values.flatten
         phone_numbers = result.values
       end
       phone_numbers
