@@ -114,8 +114,6 @@ RSpec.configure do |config|
 
     # Connect to the test database when testing
     allow(BaseModel).to receive(:connection).and_return(PG.connect(dbname: 'test_contacts'))
-#    allow(Contact).to receive(:connection).and_return(PG.connect(dbname: 'test_contacts'))
-#    allow(PhoneNumber).to receive(:connection).and_return(PG.connect(dbname: 'test_contacts'))
 
     # Reset DB on each pass
     DatabaseCleaner.strategy = :truncation
