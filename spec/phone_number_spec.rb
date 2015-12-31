@@ -118,28 +118,27 @@ describe PhoneNumber do
         @phone_number.save
       end
 
-#      it 'updates existing data in the database' do
-#        @phone_number.save
-#        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
-#        expect(results.values[0][0].to_i).to eq(3)
-#
-#        phone_number = PhoneNumber.find(3)
-#        expect(phone_number.id).to eq('3')
-#        expect(phone_number.name).to eq('Dan')
-#        expect(phone_number.email).to eq('daniel@capitolhill.ca')
-#
-#        phone_number.name = 'Daniel Bidulock'
-#        phone_number.email = 'daniel@rockyvalley.ca'
-#        phone_number.save
-#
-#        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
-#        expect(results.values[0][0].to_i).to eq(3)
-#
-#        phone_number = PhoneNumber.find(3)
-#        expect(phone_number.id).to eq('3')
-#        expect(phone_number.name).to eq('Daniel Bidulock')
-#        expect(phone_number.email).to eq('daniel@rockyvalley.ca')
-#      end
+      it 'updates existing data in the database' do
+        @phone_number.save
+        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
+        expect(results.values[0][0].to_i).to eq(3)
+
+        phone_number = PhoneNumber.find(3)
+        expect(phone_number.id).to eq('3')
+        expect(phone_number.number).to eq('(604)555-0000')
+        expect(phone_number.contact_id).to eq('1')
+
+        phone_number.number = '(604)555-9999'
+        phone_number.save
+
+        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
+        expect(results.values[0][0].to_i).to eq(3)
+
+        phone_number = PhoneNumber.find(3)
+        expect(phone_number.id).to eq('3')
+        expect(phone_number.number).to eq('(604)555-9999')
+        expect(phone_number.contact_id).to eq('1')
+      end
     end
 
     describe '#destroy' do
