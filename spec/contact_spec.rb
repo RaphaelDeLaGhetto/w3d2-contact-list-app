@@ -119,6 +119,9 @@ describe Contact do
         results = Contact.connection.exec('SELECT count(*) FROM contacts');
         expect(results.values[0][0].to_i).to eq(3)
 
+        Contact.connection.exec("INSERT INTO phone_numbers (number, contact_id) VALUES ('(403)266-1234', 3)");
+        Contact.connection.exec("INSERT INTO phone_numbers (number, contact_id) VALUES ('(403)555-1234', 3)");
+
         contact = Contact.find(3)
         expect(contact.id).to eq('3')
         expect(contact.name).to eq('Dan')
@@ -180,6 +183,16 @@ describe Contact do
         results = Contact.connection.exec('SELECT count(*) FROM phone_numbers');
         expect(results.values[0][0].to_i).to eq(0)
       end
+    end
+
+    describe '#phone_numbers' do
+      it 'returns the list of phone numbers and IDs associated with this contact' do
+        contact = Contact.find(1)
+        expect(contact.phone_numbers).to eq([['1', '(604)555-1234']])
+        Contact.connection.exec("INSERT INTO phone_numbers (number, contact_id) VALUES ('(604)266-1234', 1)");
+        expect(contact.phone_numbers).to eq([['1', '(604)555-1234'], ['3', '(604)266-1234']])
+      end
+
     end
   end
 end

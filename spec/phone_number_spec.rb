@@ -5,10 +5,10 @@ describe PhoneNumber do
 
     describe '.all'do
       it 'returns a formatted list of all phone_numbers belonging to a contact' do
-        expect(PhoneNumber.all(1)).to eq(['(604)555-1234'])
-        expect(PhoneNumber.all(2)).to eq(['(604)555-4321'])
+        expect(PhoneNumber.all(1)).to eq([['1', '(604)555-1234']])
+        expect(PhoneNumber.all(2)).to eq([['2', '(604)555-4321']])
         PhoneNumber.connection.exec("INSERT INTO phone_numbers (number, contact_id) VALUES ('(604)266-1234', 2)");
-        expect(PhoneNumber.all(2)).to eq(['(604)555-4321', '(604)266-1234'])
+        expect(PhoneNumber.all(2)).to eq([['2', '(604)555-4321'], ['3', '(604)266-1234']])
         PhoneNumber.connection.exec("DELETE FROM phone_numbers WHERE contact_id = 1");
         expect(PhoneNumber.all(1)).to eq([])
       end
@@ -149,23 +149,23 @@ describe PhoneNumber do
         phone_number.destroy
       end
 
-#      it 'removes phone_number from the database' do
-#        @phone_number.save
-#        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
-#        expect(results.values[0][0].to_i).to eq(3)
-#
-#        phone_number = PhoneNumber.find(3)
-#        expect(phone_number.destroy.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
-#
-#        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
-#        expect(results.values[0][0].to_i).to eq(2)
-#
-#        phone_number = PhoneNumber.find(1)
-#        expect(phone_number.destroy.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
-#
-#        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
-#        expect(results.values[0][0].to_i).to eq(1)
-#      end
+      it 'removes phone_number from the database' do
+        @phone_number.save
+        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
+        expect(results.values[0][0].to_i).to eq(3)
+
+        phone_number = PhoneNumber.find(3)
+        expect(phone_number.destroy.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
+
+        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
+        expect(results.values[0][0].to_i).to eq(2)
+
+        phone_number = PhoneNumber.find(1)
+        expect(phone_number.destroy.result_status).to eq(PG::Constants::PGRES_COMMAND_OK)
+
+        results = PhoneNumber.connection.exec('SELECT count(*) FROM phone_numbers');
+        expect(results.values[0][0].to_i).to eq(1)
+      end
     end
   end
 end
