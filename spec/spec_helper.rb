@@ -1,6 +1,7 @@
 require 'active_record'
 require 'csv'
 require 'database_cleaner'
+require './lib/base_model'
 require './lib/contact'
 require './lib/phone_number'
 
@@ -112,8 +113,9 @@ RSpec.configure do |config|
     end
 
     # Connect to the test database when testing
-    allow(Contact).to receive(:connection).and_return(PG.connect(dbname: 'test_contacts'))
-    allow(PhoneNumber).to receive(:connection).and_return(PG.connect(dbname: 'test_contacts'))
+    allow(BaseModel).to receive(:connection).and_return(PG.connect(dbname: 'test_contacts'))
+#    allow(Contact).to receive(:connection).and_return(PG.connect(dbname: 'test_contacts'))
+#    allow(PhoneNumber).to receive(:connection).and_return(PG.connect(dbname: 'test_contacts'))
 
     # Reset DB on each pass
     DatabaseCleaner.strategy = :truncation

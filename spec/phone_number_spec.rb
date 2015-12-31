@@ -59,44 +59,44 @@ describe PhoneNumber do
       end
     end 
 
-#    describe '.search'do
-#      it 'finds the phone_numbers that match the search term provided' do
-#        records = PhoneNumber.search('khurram') 
-#        expect(records.count).to eq(1)
-#        expect(records[0][0]).to eq("1")
-#        expect(records[0][1]).to eq("Khurram Virani")
-#        expect(records[0][2]).to eq("kvirani@lighthouselabs.ca")
-#        records = PhoneNumber.search('kvirani') 
-#        expect(records.count).to eq(1)
-#        expect(records[0][0]).to eq("1")
-#        expect(records[0][1]).to eq("Khurram Virani")
-#        expect(records[0][2]).to eq("kvirani@lighthouselabs.ca")
-#        records = PhoneNumber.search('don') 
-#        expect(records.count).to eq(1)
-#        expect(records[0][0]).to eq("2")
-#        expect(records[0][1]).to eq("Don Burks")
-#        expect(records[0][2]).to eq("don@lighthouselabs.ca")
-#        records = PhoneNumber.search('LIGHTHOUSE') 
-#        expect(records.count).to eq(2)
-#        expect(records[0][0]).to eq("1")
-#        expect(records[0][1]).to eq("Khurram Virani")
-#        expect(records[0][2]).to eq("kvirani@lighthouselabs.ca")
-#        expect(records[1][0]).to eq("2")
-#        expect(records[1][1]).to eq("Don Burks")
-#        expect(records[1][2]).to eq("don@lighthouselabs.ca")
-#      end 
-#
-#      it "doesn't barf if the search term doesn't match" do
-#        records = PhoneNumber.search('daniel') 
-#        expect(records.count).to eq(0)
-#        records = PhoneNumber.search('')
-#        expect(records.count).to eq(0)
-#        records = PhoneNumber.search('    ')
-#        expect(records.count).to eq(0)
-#        records = PhoneNumber.search
-#        expect(records.count).to eq(0)
-#      end 
-#    end
+    describe '.search'do
+      it 'finds the contacts that match the phone_number provided' do
+        records = PhoneNumber.search('(604)555-1234') 
+        expect(records.count).to eq(1)
+        expect(records[0][0]).to eq("1")
+        expect(records[0][1]).to eq("Khurram Virani")
+        expect(records[0][2]).to eq("kvirani@lighthouselabs.ca")
+        records = PhoneNumber.search('1234') 
+        expect(records.count).to eq(1)
+        expect(records[0][0]).to eq("1")
+        expect(records[0][1]).to eq("Khurram Virani")
+        expect(records[0][2]).to eq("kvirani@lighthouselabs.ca")
+        records = PhoneNumber.search('555-4321') 
+        expect(records.count).to eq(1)
+        expect(records[0][0]).to eq("2")
+        expect(records[0][1]).to eq("Don Burks")
+        expect(records[0][2]).to eq("don@lighthouselabs.ca")
+        records = PhoneNumber.search('604') 
+        expect(records.count).to eq(2)
+        expect(records[0][0]).to eq("1")
+        expect(records[0][1]).to eq("Khurram Virani")
+        expect(records[0][2]).to eq("kvirani@lighthouselabs.ca")
+        expect(records[1][0]).to eq("2")
+        expect(records[1][1]).to eq("Don Burks")
+        expect(records[1][2]).to eq("don@lighthouselabs.ca")
+      end 
+
+      it "doesn't barf if the search term doesn't match" do
+        records = PhoneNumber.search('555-5555') 
+        expect(records.count).to eq(0)
+        records = PhoneNumber.search('')
+        expect(records.count).to eq(0)
+        records = PhoneNumber.search('    ')
+        expect(records.count).to eq(0)
+        records = PhoneNumber.search
+        expect(records.count).to eq(0)
+      end 
+    end
 
     describe '.connection' do
       it 'returns a postgres connect object' do

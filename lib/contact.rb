@@ -1,7 +1,7 @@
 require 'pg'
 
 # Represents a person in an address book.
-class Contact
+class Contact < BaseModel
 
   attr_accessor :name, :email, :id
 
@@ -49,12 +49,6 @@ class Contact
     def search(term=nil)
       return [] if term.nil? || term.empty?
       self.connection.exec("SELECT * FROM contacts WHERE name ILIKE '%#{term}%' OR email ILIKE '%#{term}%'").values
-    end
-
-    # Get the postgres connection object
-    def connection
-      @conn = PG.connect(dbname: 'contacts') if @conn.nil?
-      @conn
     end
   end
 end
